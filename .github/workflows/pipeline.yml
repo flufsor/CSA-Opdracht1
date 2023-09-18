@@ -13,9 +13,33 @@ permissions:
   contents: read
 
 jobs:
+  dependency-security:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: |
+        python -m venv env/
+        source env/bin/activate
+        python -m pip install .
+    - uses: pypa/gh-action-pip-audit@v1.0.8
+      with:
+          virtual-environment: env/
+
+  SBOM:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: advanced-security/generate-sbom-action@v1
+      id: gensbom
+    - uses: actions/upload-artifact@v3
+      with:
+        name: sbom
+        path: ${{ steps.gensbom.outputs.fileName }}
+
   build:
     runs-on: ubuntu-latest
-
+    needs:
+      - dependency-security
     steps:
     - uses: actions/checkout@v4
     - name: Set up Python 3.10
@@ -80,16 +104,3 @@ jobs:
     - name: Start bepasty server
       shell: bash
       run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug &
-
-  sbom:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: install dependencies
-      run: |
-        python -m venv env/
-        source env/bin/activate
-        python -m pip install .
-    - uses: pypa/gh-action-pip-audit@v1.0.8
-      with:
-          virtual-environment: env/
