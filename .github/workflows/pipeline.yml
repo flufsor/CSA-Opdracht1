@@ -80,4 +80,8 @@ jobs:
         EOF
     - name: Start bepasty server
       shell: bash
+<<<<<<< HEAD
       run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug
+=======
+      run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug &
+>>>>>>> 09ad979 (add startup logics in pipeline.yml)
