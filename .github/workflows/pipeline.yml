@@ -93,3 +93,4 @@ jobs:
     - uses: pypa/gh-action-pip-audit@v1.0.8
       with:
         inputs: .
+        require-hashes: true
