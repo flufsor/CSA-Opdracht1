@@ -80,11 +80,17 @@ jobs:
     - name: Start bepasty server
       shell: bash
       run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug &
-      
-    # - uses: anchore/sbom-action@v0
-    - uses: advanced-security/generate-sbom-action@v1
-      id: gensbom
-    - uses: actions/upload-artifact@v3
+
+  sbom:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: install dependencies
+      run: |
+        python -m venv env/
+        source env/bin/activate
+        python -m pip install .
+    - uses: pypa/gh-action-pip-audit@v1.0.8
       with:
-        name: sbom
-        path: ${{ steps.gensbom.outputs.fileName }}
+        inputs: .
+        virtual-environment: env/
