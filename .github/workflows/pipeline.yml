@@ -39,44 +39,46 @@ jobs:
         python -m pip install .
 
     - name: setup config file
+      shell: bash
+      env:
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         mv src/bepasty/config.py src/bepasty/config_bak.py
         cat <<EOF >> src/bepasty/config.py
-        class Config:
-            SITENAME = 'bepasty.example.org'
+        SITENAME = 'bepasty.example.org'
 
-            APP_BASE_PATH = None  # '/bepasty'
+        APP_BASE_PATH = None  # '/bepasty'
 
-            UPLOAD_LOCKED = False
+        UPLOAD_LOCKED = False
 
-            ASCIINEMA_THEME = 'asciinema'
+        ASCIINEMA_THEME = 'asciinema'
 
-            MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
+        MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
 
-            MAX_BODY_SIZE = 1 * 1024 * 1024 - 8192  # 8kiB safety margin, issue #155
+        MAX_BODY_SIZE = 1 * 1024 * 1024 - 8192  # 8kiB safety margin, issue #155
 
-            MAX_RENDER_SIZE = {
-                'text/x-bepasty-list': 1000 * 38,
-                'HIGHLIGHT_TYPES': 100 * 1000,
-                'application/pdf': 10 * 1000 * 1000,
-                'application/x-pdf': 10 * 1000 * 1000,
-                'image/': 10 * 1000 * 1000,
-                'audio/': 1 * 1000 * 1000 * 1000,
-                'video/': 5 * 1000 * 1000 * 1000,
-                '': 1 * 1000 * 1000,
-            }
-            USE_PYTHON_MAGIC = False
-            STORAGE = 'filesystem'
-            STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
-            SECRET_KEY = ''
-            SESSION_COOKIE_SECURE = True
-            PERMANENT_SESSION = False
-            PERMANENT_SESSION_LIFETIME = 31 * 24 * 3600
+        MAX_RENDER_SIZE = {
+            'text/x-bepasty-list': 1000 * 38,
+            'HIGHLIGHT_TYPES': 100 * 1000,
+            'application/pdf': 10 * 1000 * 1000,
+            'application/x-pdf': 10 * 1000 * 1000,
+            'image/': 10 * 1000 * 1000,
+            'audio/': 1 * 1000 * 1000 * 1000,
+            'video/': 5 * 1000 * 1000 * 1000,
+            '': 1 * 1000 * 1000,
+        }
+        USE_PYTHON_MAGIC = False
+        STORAGE = 'filesystem'
+        STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
+        SECRET_KEY = '$SECRET_KEY'
+        SESSION_COOKIE_SECURE = True
+        PERMANENT_SESSION = False
+        PERMANENT_SESSION_LIFETIME = 31 * 24 * 3600
 
-            PERMISSIONS = {
-            }
+        PERMISSIONS = {
+        }
 
-            DEFAULT_PERMISSIONS = ''
+        DEFAULT_PERMISSIONS = ''
         EOF
-
-        cat src/bepasty/config_bak.py
+        cat src/bepasty/config.py
+        
