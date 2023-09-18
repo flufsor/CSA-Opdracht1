@@ -90,6 +90,12 @@ jobs:
         python -m venv env/
         source env/bin/activate
         python -m pip install .
+    # - uses: pypa/gh-action-pip-audit@v1.0.8
+    #   with:
+    #     inputs: .
+    #     require-hashes: true
+    - name: generate third party dependency list
+      run: pip freeze >> dependencies.txt
     - uses: pypa/gh-action-pip-audit@v1.0.8
       with:
-        inputs: .
+        inputs: dependencies.txt
