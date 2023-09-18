@@ -14,7 +14,6 @@ permissions:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
@@ -81,3 +80,4 @@ jobs:
     - name: Start bepasty server
       shell: bash
       run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug &
+    - uses: anchore/sbom-action@v0
