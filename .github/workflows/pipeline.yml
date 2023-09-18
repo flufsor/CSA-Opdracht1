@@ -25,12 +25,9 @@ jobs:
         python-version: "3.10"
     # - name: Install requirements.txt
       # run: if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-    - name: create python environment
+    - name: pip upgraden
       run: |
         python -m pip install --upgrade pip
-        python -m venv ../venv
-        source ../venv/bin/activate
-
 
     - name: Install dependencies
       run: |
@@ -42,9 +39,10 @@ jobs:
       shell: bash
       env:
         SECRET_KEY: ${{ secrets.SECRET_KEY }}
+        #PERMISSIONS: ${{secrets.XXX}}
       run: |
-        mv src/bepasty/config.py src/bepasty/config_bak.py
-        cat <<EOF >> src/bepasty/config.py
+        cat <<EOF >> bepasty.conf
+
         SITENAME = 'bepasty.example.org'
 
         APP_BASE_PATH = None  # '/bepasty'
@@ -80,5 +78,6 @@ jobs:
 
         DEFAULT_PERMISSIONS = ''
         EOF
-        cat src/bepasty/config.py
-        
+    - name: Start bepasty server
+      shell: bash
+      run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug
