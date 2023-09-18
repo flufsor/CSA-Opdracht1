@@ -81,3 +81,5 @@ jobs:
       shell: bash
       run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug &
     - uses: anchore/sbom-action@v0
+      with:
+        file: requirements.d/dev.txt
