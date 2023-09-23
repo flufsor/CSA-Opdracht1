@@ -21,7 +21,7 @@ var/
 *.egg
 .eggs/
 src/bepasty/_version.py
-
+testConfig.conf
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
