@@ -283,7 +283,7 @@ jobs:
       #     target: 'http://127.0.0.1:5000'
       #     cmd_options: '-a'
 
-  apthreat_scan:
+  appthreat_scan:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
