@@ -188,14 +188,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: Run Snyk to check for vulnerabilities
-        uses: snyk/actions/python@master
-        continue-on-error: true # To make sure that SARIF upload gets called even if Snyk fails
-        env:
-          SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      - name: Self sast-scan
+        uses: AppThreat/sast-scan-action@v1.0.0
         with:
-          args: --sarif-file-output=snyk.sarif
-      - name: Upload result to GitHub Code Scanning
-        uses: github/codeql-action/upload-sarif@v2
+          output: reports
+          type: python
+      - name: Upload scan reports
+        uses: actions/upload-artifact@v1.0.0
         with:
-          sarif_file: snyk.sarif
+          name: sast-scan-reports
+          path: reports
