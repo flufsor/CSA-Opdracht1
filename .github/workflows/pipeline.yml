@@ -249,9 +249,11 @@ jobs:
           docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
           target: 'http://127.0.0.1:5000'
           cmd_options: '-a -j -U ${{env.PERMISSION_TEST}} -n bepasty-login.context'
+          fail_action: true
 
   appthreat_scan:
     runs-on: ubuntu-latest
+    name: SAST scan
     steps:
       - uses: actions/checkout@master
       - name: Self sast-scan
