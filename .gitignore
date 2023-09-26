@@ -25,7 +25,7 @@ testConfig.conf
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
+test/
 # Unit test / coverage reports
 .tox/
 .coverage

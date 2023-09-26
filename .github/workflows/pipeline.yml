@@ -266,3 +266,19 @@ jobs:
         with:
           name: sast-scan-reports
           path: reports
+
+  credentials_scan:
+    runs-on: ubuntu-latest
+    name: trufflehog scan
+    steps:
+      - uses: actions/checkout@master
+      - name: Install trufflehog
+        shell: bash
+        run: curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+      - name: run trufflehog filesystem scan
+        shell: bash
+        run: trufflehog filesystem $(pwd)/*
+      - name: run trufflehog github repo scan
+        shell: bash
+        run: trufflehog github --repo=https://github.com/flufsor/CSA-Opdracht1/tree/dev
+        
