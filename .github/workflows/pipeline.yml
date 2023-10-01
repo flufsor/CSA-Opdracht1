@@ -278,9 +278,12 @@ jobs:
       - name: run trufflehog filesystem scan
         shell: bash
         run: trufflehog filesystem $(pwd)/*
+      - name: print repo
+        shell: bash
+        run: echo ${{github.repository}}
       - name: run trufflehog github repo scan
         shell: bash
-        run: trufflehog github --repo=https://github.com/flufsor/CSA-Opdracht1/tree/dev
+        run: trufflehog github --repo=${{github.repository}}
   
   container-scan:
     name: Container scan
@@ -312,3 +315,4 @@ jobs:
       #   with:
       #     sarif_file: 'trivy-results.sarif'
       #     category: 'image'
+
