@@ -282,7 +282,6 @@ jobs:
           name: trufflehog_scan_results
           path: /creds_scan.txt
 
-  
   container-scan:
     name: Container scan
     runs-on: ubuntu-latest
