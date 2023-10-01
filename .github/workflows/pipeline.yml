@@ -304,17 +304,16 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           image-ref: 'docker.io/flufsor/bepasty-server:${{ github.sha }}'
-      #    format: 'sarif'
-          format: 'table'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
           exit-code: '1'
           scanners: "vuln,config"
           severity: 'CRITICAL,HIGH'
           vuln-type: 'os,library'
-      #     output: 'trivy-results.sarif'
           
-      # - name: Upload Trivy scan results to GitHub Security tab
-      #   uses: github/codeql-action/upload-sarif@v2
-      #   with:
-      #     sarif_file: 'trivy-results.sarif'
-      #     category: 'image'
+      - name: Upload scan reports
+        uses: actions/upload-artifact@main
+        with:
+          name: trivy-results.sarif
+          path: trivy-results.sarif
 
