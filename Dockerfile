@@ -10,6 +10,6 @@ mkdir /storage
  
 COPY example-config.conf /bepasty/bepasty.conf
  
-EXPOSE 5000
+EXPOSE 4000
  
-CMD ["/bepasty/bin/gunicorn", "bepasty.wsgi", "-k", "gevent", "--log-level=info", "--name", "bepasty", "--bind=0.0.0.0:5000", "--workers=4"]
+CMD ["/bepasty/bin/gunicorn", "bepasty.wsgi", "-k", "gevent", "--log-level=info", "--name", "bepasty", "--bind=0.0.0.0:4000", "--workers=4"]
