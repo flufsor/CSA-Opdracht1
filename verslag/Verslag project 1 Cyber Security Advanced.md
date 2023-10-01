@@ -13,7 +13,7 @@ Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepas
 
 ![](Threat%20model.png)
 
-Hierboven zit u het threat model van onze pipeline. De pipeline bevat de verschillende stappen beginnend bij de developer die code pusht naar de repositoery tot aan het continue draaien van ons programma. Bij de verschillende fasen en hun overgangen kunnen eventueel één of meerdere zwakheden dreiging aanwezig zijn. Deze staan hieronder beschrijven, maar eerst wordt elke fase kort toegelicht:
+Hierboven zit u het threat model van onze pipeline. De pipeline bevat de verschillende stappen beginnend bij de developer die code pusht naar de repository tot aan het continue draaien van ons programma. Bij de verschillende fasen en hun overgangen kunnen eventueel één of meerdere zwakheden dreiging aanwezig zijn. Deze staan hieronder beschrijven, maar eerst wordt elke fase kort toegelicht:
 
 - Source: De source repository met de code van het open source project en onze pipeline.yml.
 - Build:  De fase waar de code wordt gebouwd tot een werkend product. In ons project is dit wanneer de package gevormed word.
