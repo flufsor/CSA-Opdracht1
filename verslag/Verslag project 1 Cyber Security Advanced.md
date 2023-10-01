@@ -71,9 +71,11 @@ Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort t
 ## Security Scans
 
 ### SBOM-generatie
+
 Met deze actie wordt bij elke commit een Software Bill of Materials (SBOM) gegenereerd. Een SBOM is een document waarin alle afhankelijkheden van een softwareproject worden vermeld, inclusief de versies van de gebruikte bibliotheken en andere componenten. Dit biedt een gedetailleerd overzicht van de gebruikte softwarecomponenten en hun versies in het project.
 
 ### Depedency checking met pip-audit
+
 Deze actie biedt de mogelijkheid om grondig te controleren of er bekende kwetsbaarheden aanwezig zijn in de afhankelijkheden van de code die wordt gebruikt. Door pip-audit te gebruiken, kunnen we de afhankelijkheden van het project analyseren en controleren of er beveiligingsproblemen of bekende zwakke punten zijn in de gebruikte pakketten. Het resultaat van deze scan wordt vastgelegd en als een artifact geüpload, zodat het team toegang heeft tot een gedetailleerd rapport over eventuele kwetsbaarheden.
 
 ![](pip-audit.png)
