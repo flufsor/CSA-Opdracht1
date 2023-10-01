@@ -88,5 +88,5 @@ Deze actie is bedoeld voor het uitvoeren van een Dynamic Application Security Te
 
 ![](ZAP.png)
 
-### Credentials-can met TruffleHog
-Deze actie is bedoeld voor het uitvoeren van een credentials-can (of gegevenslekken-controle) met behulp van TruffleHog. TruffleHog is een tool voor statische analyse die door de broncode zoekt op zoek naar mogelijke lekken van gevoelige informatie, zoals wachtwoorden, API-sleutels en andere vertrouwelijke gegevens. 
+### Credentials-scan met TruffleHog
+Deze actie zal een scan uitvoeren voor het vinden van credenties met behulp van TruffleHog. TruffleHog is een tool voor statische analyse die door de broncode zoekt op zoek naar mogelijke lekken van gevoelige informatie, zoals wachtwoorden, API-sleutels en andere vertrouwelijke gegevens. 
