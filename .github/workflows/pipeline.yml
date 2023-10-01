@@ -284,6 +284,7 @@ jobs:
       - name: run trufflehog github repo scan
         shell: bash
         run: trufflehog github --repo=${{github.ref_name}}
+
   
   container-scan:
     name: Container scan
@@ -306,6 +307,7 @@ jobs:
       #    format: 'sarif'
           format: 'table'
           exit-code: '1'
+          scanners: "vuln,config"
           severity: 'CRITICAL,HIGH'
           vuln-type: 'os,library'
       #     output: 'trivy-results.sarif'
