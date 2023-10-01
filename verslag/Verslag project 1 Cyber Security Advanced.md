@@ -5,7 +5,7 @@ _Door Niels Van De Ginste en Tom Goedemé_
 
 In dit verslag wordt een gedetailleerde beschrijving gegeven over het eerste project voor het vak Cyber Security Advanced. Voor dit project hebben we een secure pipeline project opgesteld dat verscheidene veiligheidsscans uitvoert op de code van een open source project. Uiteraard gaan wij ook de nodige best practices uitvoeren om onze eigen pipeline zo veilig mogelijk te gebruiken.
 
-Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepasty/bepasty-server). Dit is een pastebin geschreven in Python. Op deze code gaan dus verschillende checks uitgevoerd wo
+Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepasty/bepasty-server). Dit is een pastebin geschreven in Python. Op deze code gaan dus verschillende checks uitgevoerd worden.
 
 ## Threat model
 
@@ -29,7 +29,7 @@ Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort t
 
 - **T01**: Tijdens een push zou de mogelijkheid bestaan dat een aanvaller de code van de developer onderschept en wijzigt, waardoor er (malafide) aangepaste code staat in de source repo.
 - **T02**: De developer kan per ongeluk zelf zwakheden introduceren, doordat slechte code wordt toegevoegd aan de repo.
-- T03: Aangezien we een remote repository gebruiken van een extern bedrijf Github moeten we deze partner vertrouwen. Maar deze heeft in principe volle toegang tot de code en zou deze ook kunnen aanpassen.
+- T03: Aangezien van een remote repository gebruiken bij het extern bedrijf Github, vertrouwen wij hen onze code toe. Dit is een security risk waar rekening mee gehouden moet worden.
 
 #### Source
 
@@ -43,7 +43,7 @@ Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort t
 
 #### Build
 
-- T08: Een aanvaller kan ongeautoriseerde builds uitvoeren mocht hij toegang gekregen hebben tot de build.
+- T08: Een aanvaller kan ongeautoriseerde builds uitvoeren, mocht hij toegang gekregen hebben tot de build.
 - **T09**: Wanneer er tijdens de build libraries worden gebruikt met zwakheden in, dan is het gebouwde product zelf ook kwetsbaar.
 
 #### Test
@@ -76,23 +76,29 @@ Met deze actie wordt bij elke commit een Software Bill of Materials (SBOM) gegen
 
 ### Depedency checking met pip-audit
 
-Deze actie biedt de mogelijkheid om grondig te controleren of er bekende kwetsbaarheden aanwezig zijn in de afhankelijkheden van de code die wordt gebruikt. Door pip-audit te gebruiken, kunnen we de afhankelijkheden van het project analyseren en controleren of er beveiligingsproblemen of bekende zwakke punten zijn in de gebruikte pakketten. Het resultaat van deze scan wordt vastgelegd en als een artifact geüpload, zodat het team toegang heeft tot een gedetailleerd rapport over eventuele kwetsbaarheden.
+Deze actie biedt de mogelijkheid om grondig te controleren of er bekende kwetsbaarheden aanwezig zijn in de afhankelijkheden van de code die wordt gebruikt. Door pip-audit te gebruiken, kunnen we de afhankelijkheden van het project analyseren en controleren of er beveiligingsproblemen of bekende zwakke punten zijn in de gebruikte pakketten. Het resultaat van deze scan wordt vastgelegd en vervolgens als een artifact geüpload. Op deze manier heeft het team toegang tot een gedetailleerd rapport over eventuele kwetsbaarheden.
 
 ![](pip-audit.png)
 
 ### SAST-scan met AppThreat
-Deze actie zal de code scannen op kwetsbaarheden met behulp van AppThreat. Na het scannen zal er een artifact beschikbaar worden gesteld met een rapport over de gevonden kwetsbaarheden.
+
+Deze actie zal de code in de repository scannen op kwetsbaarheden met behulp van de SAST-tool AppThreat. Na het scannen zal er opnieuw een artifact beschikbaar worden gesteld met een rapport over de gevonden kwetsbaarheden.
 
 ![](AppThreat.png)
 
 ### DAST-scan met ZAP
-Deze actie is bedoeld voor het uitvoeren van een Dynamic Application Security Testing (DAST)-scan met behulp van de Zed Attack Proxy (ZAP). Tijdens deze scan zal ZAP de webapplicatie actief testen op mogelijke beveiligingskwetsbaarheden en potentiële risico's identificeren. 
+
+Voor de Dynamic Application Security Testing-scan maken we gebruik van de Zed Attack Proxy (ZAP). Tijdens deze scan zal ZAP de webapplicatie actief testen op mogelijke beveiligingskwetsbaarheden en potentiële risico's identificeren. We spreken dan vooral over mogelijke XSS-zwakheden, ontbrekende security headers (HSTS, anti-clickjacking, ...).
+
+Bijkomend is er in de pipeline een context bestand meegegeven aan deze scan. Hierdoor kan ZAP gebruikmaken van een authenticatiemethode om zo tot webpagina's te geraken die normaal gezien enkel na een inlogactie toegankelijk zijn.
+
+Zoals u op de onderstaande foto ziet, wordt een HTML rapport gegenereerd. Dit rapport bevat een oplijsting van alle gevonden zwakheden tijdens de DAST-scan. Dit rapport wordt opnieuw als een artifact geüpload naar Github.
 
 ![](ZAP.png)
 
 ### Credentials-scan met TruffleHog
-Deze actie zal een scan uitvoeren voor het vinden van credenties met behulp van TruffleHog. TruffleHog is een tool voor statische analyse die door de broncode zoekt op zoek naar mogelijke lekken van gevoelige informatie, zoals wachtwoorden, API-sleutels en andere vertrouwelijke gegevens. 
 
+Trufflehog zal een scan uitvoeren dat zich focust op het vinden van gevoelige informatie zoals wachtwoorden, API-sleutels, SSH-keys Deze tool voert een statische analyse uit en zal alle code overlopen.
 
 ## Best practices voor een secure pipeline
 
@@ -108,3 +114,14 @@ Onze pipeline wordt uitgevoerd op basis van pull requests in plaats van directe 
 
 Door gebruik te maken van pull requests geven we ons ontwikkelteam de mogelijkheid om hun wijzigingen te valideren en te bespreken voordat ze worden samengevoegd. 
 
+In onze repository geldt ook de volgende ruleset: wanneer een scan faalt, wat wijst op een zwakheid, zal de pull request niet gemerged kunnen worden met de main branch. Dit voorkomt nalatig gebruik van de veiligheidsscans die worden uitgevoerd. De SBOM mag echter wel falen, aangezien deze enkel een schets genereert van onze codebase.
+
+## Conclusie
+
+In dit verslag hebben we een gedetailleerde beschrijving gegeven van ons project voor het vak Cyber Security Advanced. We hebben een secure pipeline ontwikkeld om verschillende veiligheidsscans uit te voeren op de code van het open source project "Bepasty". Onze pipeline is ontworpen om potentiële zwakke punten in de code te identificeren en te voorkomen dat deze in de hoofdrepository terechtkomen. We hebben ook best practices geïmplementeerd om de integriteit van onze code en de veiligheid van het ontwikkelproces te waarborgen.
+
+## Geleerde lessen
+
+Deze opdracht heeft ons veel bijgeleerd over de best practices bij een secure pipeline. Het uitvoeren van security scans op de code draagt bij aan een veilige en betrouwbare flow in de repository.
+
+Ook hebben we veel bijgeleerd over veilig werken in een repository. Zo draagt het signen van commits bij aan de integriteit van de toegevoegde code. Daarnaast hebben we bijgeleerd dat deze scans best uitgevoerd worden tijdens pull requests. Zo kan worden bepaalt, op basis van de scanresultaten, of code al dan niet gemerged mag worden. Dit voorkomt dat onveilige code in de codebase terecht komt.
