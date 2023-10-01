@@ -3,7 +3,7 @@ _Door Niels Van De Ginste en Tom Goedemé_
 
 ## Inleiding
 
-In dit verslag wordt een gedetailleerde beschrijving gegeven over het eerste project voor het vak Cyber Security Advanced. Voor dit project hebben we een secure pipeline project opgesteld dat verscheidene veiligheidsscans uitvoert op de code van een open source project. Uiteraard gaan wij ook de nodige best practices uitvoeren om onze eigen pipeline zo veilig mogelijk te gebruiken.
+In dit verslag wordt een gedetailleerde beschrijving gegeven over het eerste project voor het vak Cyber Security Advanced. Voor dit project hebben we een secure pipeline opgesteld dat verscheidene veiligheidsscans uitvoert op de code van een open source project. Uiteraard gaan wij ook de nodige best practices uitvoeren om zo veilig mogelijk te werken binnen in onze repository.
 
 Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepasty/bepasty-server). Dit is een pastebin geschreven in Python. Op deze code gaan dus verschillende checks uitgevoerd worden.
 
@@ -13,23 +13,23 @@ Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepas
 
 ![](Threat%20model.png)
 
-Hierboven zit u het threat model van onze pipeline. De pipeline bevat de verschillende stappen beginnend bij de developer die code pusht naar de repositoery tot aan het continue draaien van ons programma. Bij de verschillende fasen en hun overgangen kunnen eventueel één of meerdere zwakheden dreiging aanwezig zijn. Deze staan hieronder beschrijven, maar eerst wordt elke fase kort toegelicht:
+Hierboven zit u het threat model van onze pipeline. De pipeline bevat de verschillende stappen beginnend vanaf de developer die code pusht naar de repository tot aan het continue draaien van een Bepasty-server. Bij de verschillende fasen en hun overgangen kunnen eventueel één of meerdere dreigingen aanwezig zijn. Deze staan hieronder beschreven, maar eerst wordt elke fase kort toegelicht:
 
-- Source: De source repository met de code van het open source project en onze pipeline.yml.
-- Build:  De fase waar de code wordt gebouwd tot een werkend product. In ons project is dit wanneer de package gevormed word.
-- Test: Het werkend product wordt getest op eventuele zwakheden of onverwacht gedrag.
-- Release: Een definitieve versie wordt gepusht naar de officiële python repository pypi.
-- Operate: Het product blijft voor langere tijd actief. Al dan niet gebruikt door een klant of een developer.
+- Source: de source repository met de code van het open source project en het yaml bestand van onze pipeline.
+- Build:  de fase waar de code wordt gebouwd tot een werkend product. In ons project is dit wanneer de package gevormd word.
+- Test: het werkend product wordt getest op eventuele zwakheden en eventueel onverwacht gedrag.
+- Release: een definitieve versie wordt gepusht naar de officiële python repository PyPi.
+- Operate: de Bepasty-server blijft voor langere tijd actief. Al dan niet gebruikt door een klant of een developer.
 
 ### Toelichting zwakheden
 
-Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort toegelicht, opgesplitst volgens de fase waarin deze kunnen voorkomen. De zwakheden die in het **vetgedrukt** staan, proberen wij op een bepaalde manier op te lossen. Dit kan zijn met behulp van veiligheidsscans in onze pipeline of algemene best practices.
+Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort toegelicht. De verschillende zwakheden zijn gegroepeerd volgens de fase waarin deze kunnen voorkomen. De zwakheden die in het **vetgedrukt** staan proberen wij op een bepaalde manier op te lossen. Dit kan zijn met behulp van veiligheidsscans in onze pipeline of via algemene best practices.
 
 #### Developer ==> Source
 
-- **T01**: Tijdens een push zou de mogelijkheid bestaan dat een aanvaller de code van de developer onderschept en wijzigt, waardoor er (malafide) aangepaste code staat in de source repo.
+- **T01**: Tijdens een push kan het voorkomen dat een aanvaller de code van de developer onderschept en wijzigt, waardoor er (malafide) aangepaste code in de source repo terecht komt.
 - **T02**: De developer kan per ongeluk zelf zwakheden introduceren, doordat slechte code wordt toegevoegd aan de repo.
-- T03: Aangezien van een remote repository gebruiken bij het extern bedrijf Github, vertrouwen wij hen onze code toe. Dit is een security risk waar rekening mee gehouden moet worden.
+- T03: Aangezien wij van een remote repository gebruiken bij het extern bedrijf Github, vertrouwen wij hen onze code toe. Dit is een security risk waar rekening mee gehouden moet worden.
 
 #### Source
 
@@ -37,23 +37,23 @@ Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort t
 
 #### Source ==> Build
 
-- T05: Een aanvaller zou juist voorde built van de code de buildsource veranderen. Op deze manier worden anders bestanden gebruikt tijdens de bouw, wat kan leiden tot zwakheden.
+- T05: Een aanvaller zou juist voor de built de buildsource kunnen veranderen. Op deze manier worden anders bestanden gebruikt tijdens de bouw, wat kan leiden tot zwakheden.
 - T06: Wanneer de code eerder werd veranderd in de source repo, betekent dit dat er zwakheden kunnen optreden wanneer de aangepaste code wordt uitgevoerd.
-- T07: Github maakt gebruik van caching om performanter te zijn tijdens herhaaldeijke builds. Deze cache zou poisoned kunnen geraken, wat enige build zou compromitteren.
+- T07: Github maakt gebruik van caching om efficiënter te zijn tijdens herhaaldelijke builds. Een hacker zou deze cache kunnen "vergiftigen", wat de build kan compromitteren.
 
 #### Build
 
-- T08: Een aanvaller kan ongeautoriseerde builds uitvoeren, mocht hij toegang gekregen hebben tot de build.
+- T08: Een aanvaller kan ongeautoriseerde builds uitvoeren, wanneer hij toegang heeft tot het bouwproces.
 - **T09**: Wanneer er tijdens de build libraries worden gebruikt met zwakheden in, dan is het gebouwde product zelf ook kwetsbaar.
 
 #### Test
 
-- **T10**: Testen van code is een belangrijke taak die grondig uitgevoerd moet worden. Wanneer er niet me aandacht wordt getest, kunnen fouten onder de rader blijven en verder in de release fase geraken.
-- **T11**: Vaak worden ook geautomatiseerde tests uitgevoerd zoals in een pipeline. Echter kan men vergeten om een blockade te starten wanneer fouten worden gevonden. Indien dit niet wordt gedaan, geraken bugs of sensitieve data alsnog in productieomgevingen ook al zijn deze wel gedetecteerd geweest.
+- **T10**: Testen van code is een belangrijke taak die grondig uitgevoerd moet worden. Wanneer er niet met aandacht wordt getest, kunnen fouten onder de rader blijven en verder in de release fase geraken.
+- **T11**: Vaak worden ook geautomatiseerde tests uitgevoerd, al dan niet via een pipeline. Echter kan men vergeten om een blockade te starten wanneer fouten worden gevonden. Indien dit niet wordt gedaan, geraken bugs of sensitieve data alsnog in productieomgevingen.
 
 #### Test ==> Release
 
-- T12: Het risico bestaat dat tijdens de upload van een bepaalde package naar pypi, deze package wordt opgevangen en aangepast.
+- T12: Een pakket kan tijdens de upload naar PyPi opgevangen en aangepast worden. Hierdoor wordt een malafide versie van het pakket publiek beschikbaar gesteld.
 
 #### Release
 
@@ -70,9 +70,13 @@ Nu elk onderdeel is besproken, worden de verschillende zwakheden ook even kort t
 
 ## Security Scans
 
+Hieronder worden verschillende soorten security scans toegelicht die tijdens de pipeline worden uitgevoerd. We maken gebruik van verscheiden derde partij tools, om aan te tonen dat er veel mogelijkheden zijn om een veilig scanproces op te stellen.
+
 ### SBOM-generatie
 
 Met deze actie wordt bij elke commit een Software Bill of Materials (SBOM) gegenereerd. Een SBOM is een document waarin alle afhankelijkheden van een softwareproject worden vermeld, inclusief de versies van de gebruikte bibliotheken en andere componenten. Dit biedt een gedetailleerd overzicht van de gebruikte softwarecomponenten en hun versies in het project.
+
+Het wordt gebruikt voor beveiliging en kwetsbaarheidsbeheer, compliance en licentiebeheer, transparantie en vertrouwen van stakeholders, effectief onderhoud en support, evenals risicobeoordeling in softwareontwikkeling en -gebruik.
 
 ### Depedency checking met pip-audit
 
