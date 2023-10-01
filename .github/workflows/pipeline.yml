@@ -277,13 +277,7 @@ jobs:
         run: curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
       - name: run trufflehog filesystem scan
         shell: bash
-        run: trufflehog filesystem $(pwd)/*
-      - name: print repo
-        shell: bash
-        run: echo ${{github.ref_name}}
-      - name: run trufflehog github repo scan
-        shell: bash
-        run: trufflehog github --repo=${{github.ref_name}}
+        run: trufflehog filesystem $(pwd)/* --fail
 
   
   container-scan:
