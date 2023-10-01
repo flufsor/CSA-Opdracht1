@@ -306,6 +306,7 @@ jobs:
       #    format: 'sarif'
           format: 'table'
           exit-code: '1'
+          scanners: "vuln,config"
           severity: 'CRITICAL,HIGH'
           vuln-type: 'os,library'
       #     output: 'trivy-results.sarif'
