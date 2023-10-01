@@ -92,3 +92,19 @@ Deze actie is bedoeld voor het uitvoeren van een Dynamic Application Security Te
 
 ### Credentials-scan met TruffleHog
 Deze actie zal een scan uitvoeren voor het vinden van credenties met behulp van TruffleHog. TruffleHog is een tool voor statische analyse die door de broncode zoekt op zoek naar mogelijke lekken van gevoelige informatie, zoals wachtwoorden, API-sleutels en andere vertrouwelijke gegevens. 
+
+
+## Best practices voor een secure pipeline
+
+### Commits signing
+
+We maken gebruik van commit signing om de integriteit van onze code te waarborgen. Dit betekent dat elke wijziging die we aanbrengen in onze codebase digitaal wordt ondertekend met een unieke handtekening. Hierdoor kunnen we verifiëren dat de wijzigingen daadwerkelijk afkomstig zijn van een geautoriseerde bron en niet zijn gewijzigd of gemanipuleerd onderweg.
+
+Daarnaast hebben we ingesteld dat branches niet kunnen worden gemerged als ze commits bevatten die niet zijn ondertekend. Commit signing is dus niet alleen een integriteitscontrole, maar ook een essentieel onderdeel van ons merge- en goedkeuringsproces.
+
+### Pull request boven push
+
+Onze pipeline wordt uitgevoerd op basis van pull requests in plaats van directe pushes naar de repository. Deze aanpak is bedoeld om potentiële zwakke punten te identificeren en te voorkomen dat ze rechtstreeks in onze codebase terechtkomen. 
+
+Door gebruik te maken van pull requests geven we ons ontwikkelteam de mogelijkheid om hun wijzigingen te valideren en te bespreken voordat ze worden samengevoegd. 
+
