@@ -281,4 +281,34 @@ jobs:
       - name: run trufflehog github repo scan
         shell: bash
         run: trufflehog github --repo=https://github.com/flufsor/CSA-Opdracht1/tree/dev
-        
+  
+  container-scan:
+    name: Container scan
+    runs-on: ubuntu-latest
+    # permissions:
+    #   contents: read
+    #   security-events: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@master
+
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t docker.io/flufsor/bepasty-server:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/flufsor/bepasty-server:${{ github.sha }}'
+      #    format: 'sarif'
+          format: 'table'
+          exit-code: '1'
+          severity: 'CRITICAL,HIGH'
+          vuln-type: 'os,library'
+      #     output: 'trivy-results.sarif'
+          
+      # - name: Upload Trivy scan results to GitHub Security tab
+      #   uses: github/codeql-action/upload-sarif@v2
+      #   with:
+      #     sarif_file: 'trivy-results.sarif'
+      #     category: 'image'
