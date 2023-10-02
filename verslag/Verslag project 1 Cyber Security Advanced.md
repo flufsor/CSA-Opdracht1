@@ -7,7 +7,7 @@ In dit verslag wordt een gedetailleerde beschrijving gegeven over het eerste pro
 
 Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepasty/bepasty-server). Dit is een pastebin geschreven in Python. Op deze code gaan dus verschillende checks uitgevoerd worden.
 
-Link naar de repository: [repo](https://github.com/flufsor/CSA-Opdracht1)
+Link naar de repository: [https://github.com/flufsor/CSA-Opdracht1](https://github.com/flufsor/CSA-Opdracht1)
 
 ## Threat model
 
