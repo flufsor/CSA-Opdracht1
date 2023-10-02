@@ -1,0 +1,243 @@
+
+name: Bepasty application
+
+on:
+  schedule:
+  - cron: "0 1 */7 * *"
+  pull_request:
+    branches: [ "dev" ]
+
+permissions:
+  contents: read
+
+jobs:
+  Dependency-scan:
+    name: Dependency scan
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        python -m venv env/
+        source env/bin/activate
+        python -m pip install .
+        
+    - uses: pypa/gh-action-pip-audit@v1.0.8
+      with:
+          virtual-environment: env/
+
+  SAST-scan:
+    runs-on: ubuntu-latest
+    name: SAST scan
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Self sast-scan
+        uses: AppThreat/sast-scan-action@v1.0.0
+        with:
+          output: reports
+          type: python
+
+      - name: Upload scan reports
+        uses: actions/upload-artifact@v1.0.0
+        with:
+          name: sast-scan-reports
+          path: reports
+      
+  DAST-scan:
+    runs-on: ubuntu-latest
+    name: DAST scan
+    permissions: write-all
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        
+      - name: Set up Python 3.10
+        uses: actions/setup-python@v3
+        with:
+          python-version: "3.10"
+
+      - name: Pip upgraden
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install .
+
+      - name: Setup config file
+        shell: bash
+        env:
+          SECRET_KEY: ${{ secrets.SECRET_KEY }}
+          PERMISSION_TEST: ${{secrets.PERMISSION_TEST}}
+        run: |
+          cat <<EOF >> bepasty.conf
+
+          SITENAME = 'bepasty.example.org'
+
+          APP_BASE_PATH = None  # '/bepasty'
+
+          UPLOAD_LOCKED = False
+
+          ASCIINEMA_THEME = 'asciinema'
+
+          MAX_ALLOWED_FILE_SIZE = 5 * 1000 * 1000 * 1000
+
+          MAX_BODY_SIZE = 1 * 1024 * 1024 - 8192  # 8kiB safety margin, issue #155
+
+          MAX_RENDER_SIZE = {
+              'text/x-bepasty-list': 1000 * 38,
+              'HIGHLIGHT_TYPES': 100 * 1000,
+              'application/pdf': 10 * 1000 * 1000,
+              'application/x-pdf': 10 * 1000 * 1000,
+              'image/': 10 * 1000 * 1000,
+              'audio/': 1 * 1000 * 1000 * 1000,
+              'video/': 5 * 1000 * 1000 * 1000,
+              '': 1 * 1000 * 1000,
+          }
+          USE_PYTHON_MAGIC = False
+          STORAGE = 'filesystem'
+          STORAGE_FILESYSTEM_DIRECTORY = '/tmp/'
+          SECRET_KEY = '$SECRET_KEY'
+          SESSION_COOKIE_SECURE = True
+          PERMANENT_SESSION = False
+          PERMANENT_SESSION_LIFETIME = 31 * 24 * 3600
+
+          PERMISSIONS = {
+            '$PERMISSION_TEST':'admin,list,create,modify,read,delete'
+          }
+
+          DEFAULT_PERMISSIONS = ''
+          EOF
+
+      - name: Start Bepasty-server
+        shell: bash
+        run: BEPASTY_CONFIG=$(pwd)/bepasty.conf bepasty-server --debug &   
+
+      - name: Setup context file for authenticated scan
+        shell: bash
+        run: |
+          cat <<EOF >> bepasty-login.context
+          <?xml version="1.0" encoding="UTF-8" standalone="no"?>
+          <configuration>
+              <context>
+                  <name>login</name>
+                  <desc/>
+                  <inscope>true</inscope>
+                  <incregexes>http://127.0.0.1:5000.*</incregexes>
+                  <tech>
+                      <include>Language</include>
+                      <include>Language.Python</include>
+                      <include>OS</include>
+                      <include>OS.Linux</include>
+                      <include>OS.MacOS</include>
+                      <include>OS.Windows</include>
+                      <include>SCM</include>
+                      <include>SCM.Git</include>
+                  </tech>
+                  <urlparser>
+                      <class>org.zaproxy.zap.model.StandardParameterParser</class>
+                      <config>{"kvps":"&amp;","kvs":"=","struct":[]}</config>
+                  </urlparser>
+                  <postparser>
+                      <class>org.zaproxy.zap.model.StandardParameterParser</class>
+                      <config>{"kvps":"&amp;","kvs":"=","struct":[]}</config>
+                  </postparser>
+                  <authentication>
+                      <type>2</type>
+                      <strategy>EACH_RESP</strategy>
+                      <pollurl/>
+                      <polldata/>
+                      <pollheaders/>
+                      <pollfreq>60</pollfreq>
+                      <pollunits>REQUESTS</pollunits>
+                      <loggedout>&lt;button type="submit" class="btn btn-outline-secondary"&gt;Login&lt;/button&gt;</loggedout>
+                      <form>
+                          <loginurl>http://127.0.0.1:5000/+login</loginurl>
+                          <loginbody>token={%username%}</loginbody>
+                          <loginpageurl>http://127.0.0.1:5000/+login</loginpageurl>
+                      </form>
+                  </authentication>
+                  <users>
+                      <user>3984;true;MTIzNA==;2;MTIzNA==~MTIzNA==~</user>
+                  </users>
+                  <forceduser>3984</forceduser>
+                  <session>
+                      <type>0</type>
+                  </session>
+                  <authorization>
+                      <type>0</type>
+                      <basic>
+                          <header/>
+                          <body/>
+                          <logic>AND</logic>
+                          <code>-1</code>
+                      </basic>
+                  </authorization>
+              </context>
+          </configuration>
+          EOF
+   
+      - name: ZAP authenticated scan
+        uses: zaproxy/action-full-scan@v0.7.0
+        env:
+          PERMISSION_TEST: ${{secrets.PERMISSION_TEST}}
+        with:
+          docker_name: 'ghcr.io/zaproxy/zaproxy:stable'
+          target: 'http://127.0.0.1:5000'
+          cmd_options: '-a -j -U ${{env.PERMISSION_TEST}} -n bepasty-login.context'
+          fail_action: true
+          allow_issue_writing: false
+
+  Credentials-scan:
+    runs-on: ubuntu-latest
+    name: Credentials scan
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Trufflehog
+        shell: bash
+        run: curl -sSfL https://raw.githubusercontent.com/trufflesecurity/trufflehog/main/scripts/install.sh | sh -s -- -b /usr/local/bin
+
+      - name: Run Trufflehog filesystem scan
+        shell: bash
+        run: trufflehog filesystem $(pwd)/* --fail >> creds_scan.txt
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: trufflehog_scan_results
+          path: creds_scan.txt
+
+  Container-scan:
+    name: Container scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build an image from Dockerfile
+        run: |
+          docker build -t docker.io/flufsor/bepasty-server:${{ github.sha }} .
+
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/flufsor/bepasty-server:${{ github.sha }}'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          exit-code: '1'
+          scanners: "vuln,config"
+          severity: 'CRITICAL,HIGH'
+          vuln-type: 'os,library'
+          
+      - name: Upload scan reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-results.sarif
+          path: trivy-results.sarif
+

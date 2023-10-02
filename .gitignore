@@ -21,11 +21,11 @@ var/
 *.egg
 .eggs/
 src/bepasty/_version.py
-
+testConfig.conf
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
-
+test/
 # Unit test / coverage reports
 .tox/
 .coverage
@@ -47,8 +47,9 @@ coverage.xml
 # Django stuff:
 *.log
 *.pot
-
+.venv
 # Sphinx documentation
 docs/build/
 
 .idea
+.obsidian
