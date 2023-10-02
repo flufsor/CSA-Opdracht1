@@ -139,7 +139,8 @@ Daarnaast hebben we ingesteld dat branches niet kunnen worden gemerged als ze co
 
 ![](verifiedCommit1.png)![](verifiedCommit2.png)
 
-Wij zijn ervan bewust dat het verplicht signen van commits het moeilijker maakt om contributors hun code toe te voegen aan de repo. Deze methode komt dus meer tot zijn recht bij gesloten projecten.
+Wij zijn ervan bewust dat het verplicht signen van commits het moeilijker maakt om contributors hun code toe te voegen aan de repo. Deze methode komt dus meer tot zijn recht bij gesloten projecten. Zo hebben wij het "verplicht signen van commits" tijdelijk uit moeten zetten, aangezien de eerste commits in onze branch niet waren gesigned. Dit komt omdat wij pas later in dit project kennis maakten met commits signen.
+
 ### Pull request boven push
 
 Onze pipeline wordt uitgevoerd op basis van pull requests in plaats van directe pushes naar de repository. Deze aanpak is bedoeld om potentiële zwakke punten te identificeren en te voorkomen dat ze rechtstreeks in onze codebase terechtkomen. 
