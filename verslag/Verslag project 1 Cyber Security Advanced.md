@@ -8,6 +8,8 @@ In dit verslag wordt een gedetailleerde beschrijving gegeven over het eerste pro
 Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepasty/bepasty-server). Dit is een pastebin geschreven in Python. Op deze code gaan dus verschillende checks uitgevoerd worden.
 
 Link naar de repository: https://github.com/flufsor/CSA-Opdracht1
+
+De pipeline bestanden kan u terugvinden in de volgende folder: `.github/workflows`
 ## Threat model
 
 ### Beschrijving
@@ -157,7 +159,7 @@ De master en development branch in onze repositories hebben verschillende doelen
 Daarom voorzien wij ook twee verschillende pipeline bestanden die licht van elkaar verschillen. U kan hieronder een korte opsomming hiervan terugvinden:
 
 - De **dev pipeline** bevat geen SBOM analyse, aangezien deze enkel van toepassing is op de releases
-- De **master pipeline** kan periodiek uitgevoerd worden, aangezien het belangrijk is om nieuwe kwetsbaarheden te vinden, ook al is er geen nieuwe release voor een langere tijd.
+- De **master pipeline** kan periodiek uitgevoerd worden (zie volgende paragraaf), aangezien het belangrijk is om nieuwe kwetsbaarheden te vinden, ook al is er geen nieuwe release voor een langere tijd.
 ### Periodieke scans
 
 Tijdens de development van een applicatie, zijn er periodes waarbij weinig tot geen pul requests plaatsvinden. De kans bestaat echter dat gedurende deze periode zwakheden gevonden worden in de code en/of libraries.
@@ -173,6 +175,6 @@ In dit verslag hebben we een gedetailleerde beschrijving gegeven van ons project
 
 ## Geleerde lessen
 
-Deze opdracht heeft ons veel bijgeleerd over de best practices bij een secure pipeline. Het uitvoeren van security scans op de code draagt bij aan een veilige en betrouwbare flow in de repository.
+Deze opdracht heeft ons veel doen bijleren over de best practices in een secure pipeline: zo draagt het uitvoeren van security scans bij aan een veilige en betrouwbare flow in de repository. Ook het signen van commits helpt om de integriteit van de toegevoegde code te bewaren. 
 
-Ook hebben we veel bijgeleerd over veilig werken in een repository. Zo draagt het signen van commits bij aan de integriteit van de toegevoegde code. Daarnaast hebben we bijgeleerd dat deze scans best uitgevoerd worden tijdens pull requests. Zo kan worden bepaalt, op basis van de scanresultaten, of code al dan niet gemerged mag worden. Dit voorkomt dat onveilige code in de codebase terecht komt.
+Tot slot hebben we ondervonden dat de security scans best uitgevoerd worden bij pull requests. Op deze manier kunnen de scans dienen als automatische controle om te bepalen of code al dan niet gemerged mag worden. Dit voorkomt dat onveilige code in de codebase terechtkomt.
