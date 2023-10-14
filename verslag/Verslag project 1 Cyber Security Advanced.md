@@ -7,9 +7,10 @@ In dit verslag wordt een gedetailleerde beschrijving gegeven over het eerste pro
 
 Het project waar wij voor hebben gekozen heet [Bepasty](https://github.com/bepasty/bepasty-server). Dit is een pastebin geschreven in Python. Op deze code gaan dus verschillende checks uitgevoerd worden.
 
-Link naar de repository: https://github.com/flufsor/CSA-Opdracht1
 
+Link naar de repository: [https://github.com/flufsor/CSA-Opdracht1](https://github.com/flufsor/CSA-Opdracht1)
 De pipeline bestanden kan u terugvinden in de volgende folder: `.github/workflows`
+
 ## Threat model
 
 ### Beschrijving
@@ -88,6 +89,7 @@ Het wordt gebruikt voor beveiliging en kwetsbaarheidsbeheer, compliance en licen
 Hieronder ziet u een deel van de gegenereerde SBOM:
 
 ![](sbom.png)
+
 ### Depedency checking met pip-audit
 
 Deze actie biedt de mogelijkheid om grondig te controleren of er bekende kwetsbaarheden aanwezig zijn in de afhankelijkheden van de code die wordt gebruikt. Door pip-audit te gebruiken, kunnen we de afhankelijkheden van het project analyseren en controleren of er beveiligingsproblemen of bekende zwakke punten zijn in de gebruikte pakketten. Het resultaat van deze scan wordt vastgelegd en vervolgens als een artifact geüpload. Op deze manier heeft het team toegang tot een gedetailleerd rapport over eventuele kwetsbaarheden.
@@ -123,7 +125,9 @@ Indien de gebruiker de Bepasty-server wilt laten draaien in een container. Kan h
 We hebben Trivy toegevoegd aan ons pipeline proces om eventuele zwakheden in de container te ontdekken. Tijdens de pipeline wordt de container opgestart en gaat Trivy verschillende checks uitvoeren, zo wordt onder andere de image van de container nagekeken op zwakheden.
 
 Hieronder vindt u een deel van de het resultaat dat Trivy heeft gegenereerd.
+
 ![](trivyScan.png)
+
 ## Best practices voor een secure pipeline
 
 ### Credential management
@@ -141,7 +145,8 @@ Daarnaast hebben we ingesteld dat branches niet kunnen worden gemerged als ze co
 
 ![](verifiedCommit1.png)![](verifiedCommit2.png)
 
-Wij zijn ervan bewust dat het verplicht signen van commits het moeilijker maakt om contributors hun code toe te voegen aan de repo. Deze methode komt dus meer tot zijn recht bij gesloten projecten.
+Wij zijn ervan bewust dat het verplicht signen van commits het moeilijker maakt om contributors hun code toe te voegen aan de repo. Deze methode komt dus meer tot zijn recht bij gesloten projecten. Zo hebben wij het "verplicht signen van commits" tijdelijk uit moeten zetten, aangezien de eerste commits in onze branch niet waren gesigned. Dit komt omdat wij pas later in dit project kennis maakten met commits signen.
+
 ### Pull request boven push
 
 Onze pipeline wordt uitgevoerd op basis van pull requests in plaats van directe pushes naar de repository. Deze aanpak is bedoeld om potentiële zwakke punten te identificeren en te voorkomen dat ze rechtstreeks in onze codebase terechtkomen. 
@@ -169,6 +174,7 @@ We kunnen hiervoor elke week onze security scans uitvoeren volgens een vast sche
 Deze functionaliteit is echter niet actief in onze pipeline, aangezien niet alle scans een issue aanmaken op de repository. Dit maakt het moeilijk om verwittigt te worden indien er problemen tijdens deze periodieke scans optreden.
 
 ![](periodicScans.png)
+
 ## Conclusie
 
 In dit verslag hebben we een gedetailleerde beschrijving gegeven van ons project voor het vak Cyber Security Advanced. We hebben een secure pipeline ontwikkeld om verschillende veiligheidsscans uit te voeren op de code van het open source project "Bepasty". Onze pipeline is ontworpen om potentiële zwakke punten in de code te identificeren en te voorkomen dat deze in de main repository terechtkomen. We hebben ook best practices geïmplementeerd om de integriteit van onze code en de veiligheid van het ontwikkelproces te waarborgen.
@@ -177,4 +183,6 @@ In dit verslag hebben we een gedetailleerde beschrijving gegeven van ons project
 
 Deze opdracht heeft ons veel doen bijleren over de best practices in een secure pipeline: zo draagt het uitvoeren van security scans bij aan een veilige en betrouwbare flow in de repository. Ook het signen van commits helpt om de integriteit van de toegevoegde code te bewaren. 
 
+
 Tot slot hebben we ondervonden dat de security scans best uitgevoerd worden bij pull requests. Op deze manier kunnen de scans dienen als automatische controle om te bepalen of code al dan niet gemerged mag worden. Dit voorkomt dat onveilige code in de codebase terechtkomt.
+
